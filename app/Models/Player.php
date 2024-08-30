@@ -25,4 +25,9 @@ class Player extends Model
     {
         return $this->hasMany(Score::class);
     }
+
+    public function gameLogs()
+    {
+        return $this->hasMany(GameLog::class);
+    }
 }
