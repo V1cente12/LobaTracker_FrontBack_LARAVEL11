@@ -4,33 +4,32 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Game;
+use App\Models\Player;
+use App\Models\Score;
 
 class Dashboard extends Component
 {
     public $games;
-    public $showModal = false; // Para mostrar u ocultar el modal
+    public $showToCreateGameModal = false;
+    public $showToJoinGameModal = false;
     public $gameName;
     public $initialPrice;
     public $rejoinPrice;
+    public $selectedGameId;
+    public $nickname;
+    
+    protected $rules = [
+        'gameName' => 'required|string|max:255',
+        'initialPrice' => 'required|numeric|min:0',
+        'rejoinPrice' => 'required|numeric|min:0',
+        'nickname' => 'required|string|max:255',
+    ];
 
-    public function mount()
-    {
+    public function mount(){
         $this->games = Game::with('creator')->where('status', 'in_progress')->get();
     }
 
-    public function render()
-    {
-        return view('livewire.dashboard');
-    }
-
-    public function createGame()
-    {
-        $this->validate([
-            'gameName' => 'required|string|max:255',
-            'initialPrice' => 'required|numeric|min:0',
-            'rejoinPrice' => 'required|numeric|min:0',
-        ]);
-
+    public function createGame(){
         Game::create([
             'name' => $this->gameName,
             'initial_price' => $this->initialPrice,
@@ -38,14 +37,64 @@ class Dashboard extends Component
             'created_by' => auth()->id(),
             'status' => 'in_progress',
         ]);
-
-        $this->reset();
-        $this->showModal = false;
-        $this->games = Game::where('status', 'active')->get();
+        $this->reset(['gameName', 'initialPrice', 'rejoinPrice']);
+        $this->showToCreateGameModal = false;
+        $this->games = Game::with('creator')->where('status', 'in_progress')->get();
     }
 
-    public function showCreateGameModal()
-    {
-        $this->showModal = true;
+    public function joinGame(){
+        $game = Game::find($this->selectedGameId);
+        
+        if (!$game) {
+            session()->flash('error', 'Juego no encontrado.');
+            return;
+        }
+
+        $player = Player::updateOrCreate(
+            ['user_id' => auth()->id(), 'game_id' => $game->id],
+            [
+                'nickname' => $this->nickname,
+                'game_id' => $game->id,
+                'total_points' => 0 // o puedes manejar esto de acuerdo a tu lógica
+            ]
+        );
+
+        Score::updateOrCreate(
+            ['player_id' => $player->id, 'game_id' => $game->id],
+            ['points' => 0]
+        );
+
+        // Opcional: Verificar si la partida ha comenzado y ajustar el puntaje del jugador
+        $highestScore = Score::where('game_id', $game->id)->max('points');
+        if ($highestScore !== null) {
+            $playerScore = Score::where('player_id', $player->id)->where('game_id', $game->id)->first();
+            if ($playerScore) {
+                $playerScore->points = $highestScore;
+                $playerScore->save();
+            }
+        }
+        $this->showToJoinGameModal = false;
+        $this->reset('selectedGameId');
     }
+
+    public function resetModal(){
+        $this->showToCreateGameModal = false;
+        $this->showToJoinGameModal = false;
+    }
+
+    public function showCreateGameModal(){
+        $this->reset(['gameName', 'initialPrice', 'rejoinPrice']);
+        $this->showToCreateGameModal = true;
+    }
+
+    public function showJoinGameModal($gameId){
+        $this->selectedGameId = $gameId;
+        $this->reset('nickname');
+        $this->showToJoinGameModal = true;
+    }
+
+    public function render(){
+        return view('livewire.dashboard');
+    }
+
 }
