@@ -55,7 +55,7 @@ class Dashboard extends Component
             [
                 'nickname' => $this->nickname,
                 'game_id' => $game->id,
-                'total_points' => 0 // o puedes manejar esto de acuerdo a tu lógica
+                'total_points' => 0
             ]
         );
 
