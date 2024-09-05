@@ -43,39 +43,40 @@ class Dashboard extends Component
     }
 
     public function joinGame(){
-        $game = Game::find($this->selectedGameId);
-        
-        if (!$game) {
-            session()->flash('error', 'Juego no encontrado.');
-            return;
-        }
+    $game = Game::find($this->selectedGameId);
 
-        $player = Player::updateOrCreate(
-            ['user_id' => auth()->id(), 'game_id' => $game->id],
-            [
-                'nickname' => $this->nickname,
-                'game_id' => $game->id,
-                'total_points' => 0
-            ]
-        );
-
-        Score::updateOrCreate(
-            ['player_id' => $player->id, 'game_id' => $game->id],
-            ['points' => 0]
-        );
-
-        // Opcional: Verificar si la partida ha comenzado y ajustar el puntaje del jugador
-        $highestScore = Score::where('game_id', $game->id)->max('points');
-        if ($highestScore !== null) {
-            $playerScore = Score::where('player_id', $player->id)->where('game_id', $game->id)->first();
-            if ($playerScore) {
-                $playerScore->points = $highestScore;
-                $playerScore->save();
-            }
-        }
-        $this->showToJoinGameModal = false;
-        $this->reset('selectedGameId');
+    if (!$game) {
+        session()->flash('error', 'Juego no encontrado.');
+        return;
     }
+
+    $player = Player::updateOrCreate(
+        ['user_id' => auth()->id(), 'game_id' => $game->id],
+        [
+            'nickname' => $this->nickname,
+            'game_id' => $game->id,
+            'total_points' => 0
+        ]
+    );
+
+    Score::updateOrCreate(
+        ['player_id' => $player->id, 'game_id' => $game->id],
+        ['points' => 0]
+    );
+
+    // Opcional: Verificar si la partida ha comenzado y ajustar el puntaje del jugador
+    $highestScore = Score::where('game_id', $game->id)->max('points');
+    if ($highestScore !== null) {
+        $playerScore = Score::where('player_id', $player->id)->where('game_id', $game->id)->first();
+        if ($playerScore) {
+            $playerScore->points = $highestScore;
+            $playerScore->save();
+        }
+    }
+    
+    // Redirigir a la vista del juego
+    return redirect()->route('game.view', ['gameId' => $game->id]);
+}
 
     public function resetModal(){
         $this->showToCreateGameModal = false;
