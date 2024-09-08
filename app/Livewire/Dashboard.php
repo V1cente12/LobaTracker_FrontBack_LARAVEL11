@@ -26,7 +26,10 @@ class Dashboard extends Component
     ];
 
     public function mount(){
-        $this->games = Game::with('creator')->where('status', 'in_progress')->get();
+        $this->games = Game::with('creator')
+            ->latest()                       
+            ->limit(9)                     
+            ->get();
     }
 
     public function createGame(){
@@ -35,11 +38,14 @@ class Dashboard extends Component
             'initial_price' => $this->initialPrice,
             'rejoin_price' => $this->rejoinPrice,
             'created_by' => auth()->id(),
-            'status' => 'in_progress',
+            'status' => 'created',
         ]);
         $this->reset(['gameName', 'initialPrice', 'rejoinPrice']);
         $this->showToCreateGameModal = false;
-        $this->games = Game::with('creator')->where('status', 'in_progress')->get();
+        $this->games = Game::with('creator')
+            ->latest()                       
+            ->limit(9)                     
+            ->get();
     }
 
     public function joinGame(){
@@ -59,10 +65,10 @@ class Dashboard extends Component
         ]
     );
 
-    Score::updateOrCreate(
-        ['player_id' => $player->id, 'game_id' => $game->id],
-        ['points' => 0]
-    );
+    //Score::updateOrCreate(
+    //    ['player_id' => $player->id, 'game_id' => $game->id],
+    //    ['points' => 0]
+    //);
 
     // Opcional: Verificar si la partida ha comenzado y ajustar el puntaje del jugador
     $highestScore = Score::where('game_id', $game->id)->max('points');

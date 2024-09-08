@@ -1,6 +1,5 @@
-<div class="p-8 bg-gradient-to-b from-gray-100 to-gray-300 min-h-screen">
+<div class="p-8 bg-gradient-to-b from-gray-100 to-gray-300 max-h-screen overflow-y-auto">
     <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow sm:rounded-lg mb-6">
-        
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-2xl font-bold text-white">Lobby de Juegos</h2>
             <button wire:click="showCreateGameModal" class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500">
@@ -12,33 +11,51 @@
     <!-- Mostrar Juegos Activos -->
     @if($games->isEmpty())
         <div class="p-4 bg-white shadow sm:rounded-lg text-center">
-            <p class="text-lg text-gray-600">No hay juegos activos ahora. ¡Crea uno para empezar!</p>
+            <p class="text-lg text-gray-600">No hay juegos ahora. ¡Crea uno para empezar!</p>
         </div>
     @else
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach($games as $game)
-                <div class="bg-gradient-to-b from-[#199949] to-green-500 border-gray-100 shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300">
-                    <h3 class="text-xl font-semibold text-white mb-2">{{ $game->name }}</h3>
-                    <p class="text-gray-100 mb-4">
-                        <span class="font-semibold">Creado el: </span> 
-                        <span class="text-lg text-gray-200">
-                            {{ $game->created_at->format('d F Y') }}
-                        </span>
-                        <span class="text-sm text-gray-300 ml-2">
-                            a las {{ $game->created_at->format('H:i') }}
-                        </span>
-                    </p>
-                    <p class="text-gray-100">Parada: <span class="font-semibold">{{ $game->initial_price }} Bs</span></p>
-                    <p class="text-gray-100">Reenganche: <span class="font-semibold">{{ $game->rejoin_price }} Bs</span></p>
-                    <p class="text-gray-100">Creador: <span class="font-semibold">{{ $game->creator->name }}</span></p>
-                    <div class="mt-4 flex justify-end">
-                        <button wire:click="showJoinGameModal({{ $game->id }})" class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500">
-                            Unirse
-                        </button>
-                    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        @foreach($games as $game)
+            @php
+                $bgClass = 'from-green-500 to-[#199949]'; 
+                $buttonDisabled = false;
+                $buttonClass = 'bg-yellow-400 hover:bg-yellow-500 text-gray-800';
+    
+                if ($game->status === 'in_progress') {
+                    $bgClass = 'from-yellow-500 to-yellow-600'; 
+                } elseif ($game->status === 'finished') {
+                    $bgClass = 'from-gray-500 to-gray-600'; 
+                    $buttonClass = 'bg-gray-400 cursor-not-allowed text-gray-600'; 
+                    $buttonDisabled = true;
+                }
+            @endphp
+            <div class="bg-gradient-to-b {{ $bgClass }} border-gray-100 shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300">
+                <h3 class="text-xl font-semibold text-white mb-2">{{ $game->name }}</h3>
+                <p class="text-gray-100 mb-4">
+                    <span class="font-semibold">Creado el: </span> 
+                    <span class="text-lg text-gray-200">
+                        {{ $game->created_at->format('d F Y') }}
+                    </span>
+                    <span class="text-sm text-gray-300 ml-2">
+                        a las {{ $game->created_at->format('H:i') }}
+                    </span>
+                </p>
+                <p class="text-gray-100">Parada: <span class="font-semibold">{{ $game->initial_price }} Bs</span></p>
+                <p class="text-gray-100">Reenganche: <span class="font-semibold">{{ $game->rejoin_price }} Bs</span></p>
+                <p class="text-gray-100">Creador: <span class="font-semibold">{{ $game->creator->name }}</span></p>
+    
+                <div class="mt-4 flex justify-end">
+                    <button 
+                        wire:click="showJoinGameModal({{ $game->id }})" 
+                        class="{{ $buttonClass }} px-4 py-2 rounded-lg font-semibold"
+                        @if($buttonDisabled) disabled @endif
+                    >
+                        Unirse
+                    </button>
                 </div>
-            @endforeach
-        </div>
+            </div>
+        @endforeach
+    </div>
     @endif
 
     <!-- Modal para Crear Juego -->

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
-            $table->enum('status', ['in_progress', 'finished'])->default('in_progress');
+            $table->enum('status', ['created', 'in_progress', 'finished'])->default('created');
             $table->timestamps();
         });
     }
