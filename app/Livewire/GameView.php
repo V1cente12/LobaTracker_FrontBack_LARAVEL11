@@ -64,6 +64,14 @@ class GameView extends Component
             $selectedPlayer->total_points = $totalPoints;
             $selectedPlayer->save();
         }
+
+        $selectedGame = Game::where('id', $this->selectedGameId)->first();
+
+        if ($selectedGame && $selectedGame->status != 'in_progress') {
+            $selectedGame->status = 'in_progress';
+            $selectedGame->save();
+        }
+        
         $this->hideReportPointsModal();
     }
 

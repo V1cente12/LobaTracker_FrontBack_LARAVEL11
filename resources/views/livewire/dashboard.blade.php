@@ -1,4 +1,4 @@
-<div class="p-4 bg-gradient-to-b from-gray-100 to-gray-300 max-h-screen overflow-y-auto">
+<div class="p-4 bg-gradient-to-b from-gray-100 to-gray-300 max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-screen-xl mx-auto max-h-screen overflow-y-auto">
     <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow-lg rounded-lg mb-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-2xl font-bold text-white">Lobby de Juegos</h2>
@@ -11,7 +11,7 @@
     <!-- Mostrar Juegos -->
     @if($games->isEmpty())
         <div class="p-4 bg-white shadow sm:rounded-lg text-center">
-            <p class="text-lg text-gray-600">No hay juegos ahora. ¡Crea uno para empezar!</p>
+            <p class="text-lg text-gray-600">No hay juegos ahora. Crea uno para empezar!</p>
         </div>
     @else
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
