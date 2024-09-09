@@ -30,4 +30,8 @@ class Game extends Model
     {
         return $this->hasMany(GameLog::class);
     }
+    public function payments()
+    {
+        return $this->hasMany(Payments::class);
+    }
 }
