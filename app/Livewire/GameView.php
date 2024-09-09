@@ -44,21 +44,23 @@ class GameView extends Component
         ]);
 
         // Crear un nuevo registro en la tabla `scores`
-        Score::create([
+        $createPointsScore = Score::create([
             'player_id' => $this->selectedPlayerId,
             'game_id' => $this->selectedGameId,
             'points' => $this->points,
         ]);
 
+        $totalPoints = Score::where('player_id', $this->selectedPlayerId)
+                                    ->where('game_id', $this->selectedGameId)
+                                    ->sum('points');
+        $createPointsScore->total = $totalPoints;
+        $createPointsScore->save();
         // Actualizar el total de puntos en la tabla `players`
         $selectedPlayer = Player::where('id', $this->selectedPlayerId)
                         ->where('game_id', $this->selectedGameId)
                         ->first();
 
         if ($selectedPlayer) {
-            $totalPoints = Score::where('player_id', $this->selectedPlayerId)
-                                ->where('game_id', $this->selectedGameId)
-                                ->sum('points');
             $selectedPlayer->total_points = $totalPoints;
             $selectedPlayer->save();
         }

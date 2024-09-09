@@ -1,27 +1,38 @@
-<div class="container mx-auto bg-gradient-to-b from-gray-100 to-gray-300 p-8 shadow-lg rounded-lg">
-    <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow sm:rounded-lg mb-6">
+<div class="max-w-lg sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-screen-xl mx-auto bg-gradient-to-b from-gray-100 to-gray-300 p-4 shadow-lg rounded-lg mt-20">
+    <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow-lg rounded-lg mb-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-2xl font-bold text-white">{{ $game->name }}</h2>
             <button wire:click="showReportPointsModal({{ $game->id }})" class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500">
                 Reportar Puntos
             </button>
         </div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    </div>    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-auto max-w-xs sm:max-w-sm md:max-w-md lg:max-w-5xl">
         @foreach($players as $player)
-            <div class="bg-white rounded-lg shadow-lg p-4">
-                <h2 class="text-xl font-semibold mb-4">{{ $player->nickname }}</h2>
+            @php
+                $isCurrentUser = $player->user_id == auth()->id();
+            @endphp
+            <div class="{{ $isCurrentUser ? 'bg-gradient-to-b from-green-500 to-[#199949]' : 'bg-white' }} rounded-lg shadow-lg p-4">
+                <h2 class="text-2xl font-semibold mb-4 text-center">{{ $player->nickname }}</h2>
                 <div class="space-y-2">
                     @foreach($player->scores as $score)
-                        <div class="flex justify-between items-center bg-gray-100 p-2 rounded-md">
-                            <span>{{ $score->points }} - {{$player->total_points}}</span>
+                        <div class="flex justify-center items-center bg-gray-100 p-2 rounded-md">
+                            <span class="text-lg mr-1">
+                                @if($score->points == 0)
+                                    L
+                                @else
+                                    {{ $score->points }}
+                                @endif
+                            </span>
+                            <span class="text-lg mx-5">-</span>
+                            <span class="text-lg ml-1">{{ $score->total }}</span>
                         </div>
                     @endforeach
                 </div>
             </div>
         @endforeach
     </div>
-    <!-- Modal para Reportar Puntos -->
+    <!-- Modal -->
     <div x-data="{ open: @entangle('showToReportPointsModal') }"
          x-show="open"
          @keydown.escape.window="open = false"

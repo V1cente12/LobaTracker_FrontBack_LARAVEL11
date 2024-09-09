@@ -61,14 +61,8 @@ class Dashboard extends Component
         [
             'nickname' => $this->nickname,
             'game_id' => $game->id,
-            'total_points' => 0
         ]
     );
-
-    //Score::updateOrCreate(
-    //    ['player_id' => $player->id, 'game_id' => $game->id],
-    //    ['points' => 0]
-    //);
 
     // Opcional: Verificar si la partida ha comenzado y ajustar el puntaje del jugador
     $highestScore = Score::where('game_id', $game->id)->max('points');

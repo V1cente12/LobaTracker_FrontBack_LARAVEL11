@@ -1,5 +1,5 @@
-<div class="p-8 bg-gradient-to-b from-gray-100 to-gray-300 max-h-screen overflow-y-auto">
-    <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow sm:rounded-lg mb-6">
+<div class="p-4 bg-gradient-to-b from-gray-100 to-gray-300 max-h-screen overflow-y-auto">
+    <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow-lg rounded-lg mb-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-2xl font-bold text-white">Lobby de Juegos</h2>
             <button wire:click="showCreateGameModal" class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500">
