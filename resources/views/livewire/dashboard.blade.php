@@ -8,7 +8,7 @@
         </div>
     </div>
 
-    <!-- Mostrar Juegos Activos -->
+    <!-- Mostrar Juegos -->
     @if($games->isEmpty())
         <div class="p-4 bg-white shadow sm:rounded-lg text-center">
             <p class="text-lg text-gray-600">No hay juegos ahora. ¡Crea uno para empezar!</p>
@@ -58,7 +58,7 @@
     </div>
     @endif
 
-    <!-- Modal para Crear Juego -->
+    <!-- Modal create -->
     <div x-data="{ open: @entangle('showToCreateGameModal') }"
     x-show="open"
     @keydown.escape.window="open = false"
@@ -98,7 +98,7 @@
         </div>
     </div>
     
-    <!-- Modal para Unirse a un Juego -->
+    <!-- Modal  join -->
     <div x-data="{ open: @entangle('showToJoinGameModal') }"
     x-show="open"
     @keydown.escape.window="open = false"
