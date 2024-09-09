@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('game_id')->constrained('games')->onDelete('cascade');
-            $table->integer('total_points')->default(0);
+            $table->integer('total_points')->nullable();
             $table->timestamps();
         });
     }
