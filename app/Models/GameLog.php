@@ -11,6 +11,7 @@ class GameLog extends Model
 
     protected $fillable = ['game_id', 'player_id', 'action', 'occurred_at'];
 
+    //relationsships
     public function game()
     {
         return $this->belongsTo(Game::class);
