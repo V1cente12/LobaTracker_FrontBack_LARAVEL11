@@ -16,6 +16,7 @@ class Payments extends Model
         'amount',
     ];
 
+    //relationships
     public function player()
     {
         return $this->belongsTo(Player::class);
