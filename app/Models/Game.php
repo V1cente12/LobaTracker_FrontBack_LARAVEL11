@@ -9,7 +9,7 @@ class Game extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'initial_price', 'rejoin_price','created_by', 'status'];
+    protected $fillable = ['game_type_id','name', 'initial_price', 'rejoin_price','created_by', 'status'];
 
     public function players()
     {
@@ -33,5 +33,9 @@ class Game extends Model
     public function payments()
     {
         return $this->hasMany(Payments::class);
+    }
+    public function gameType()
+    {
+        return $this->belongsTo(GameType::class);
     }
 }
