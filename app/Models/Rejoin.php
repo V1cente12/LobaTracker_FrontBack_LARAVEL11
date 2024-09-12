@@ -11,6 +11,7 @@ class Rejoin extends Model
 
     protected $fillable = ['player_id', 'game_id', 'initial_score', 'rejoin_at'];
 
+    //relationships
     public function player()
     {
         return $this->belongsTo(Player::class);
