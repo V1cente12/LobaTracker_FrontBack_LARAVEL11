@@ -1,3 +1,11 @@
+<style>
+    body {
+        background-image: url('/images/cartas_loba.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
 <div class="max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-screen-xl mx-auto bg-gradient-to-b from-gray-100 to-gray-300 p-4 shadow-lg rounded-lg mt-20">
     <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow-lg rounded-lg mb-6">
         <div class="flex items-center justify-between mb-4">

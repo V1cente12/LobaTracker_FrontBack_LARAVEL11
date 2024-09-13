@@ -6,8 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ 'La Baraja Mágica' }}</title>
-     <!-- Favicon -->
-     <link rel="icon" href="{{ asset('images/logo_loba.ico') }}" type="image/x-icon">
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('images/logo_loba.ico') }}" type="image/x-icon">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -18,24 +18,16 @@
     <!-- Styles -->
     @livewireStyles
 
-    <style>
-        body {
-            background-image: url('/images/cartas_loba.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-    </style>
 </head>
-<body class="font-sans antialiased">
+<body class="font-sans antialiased bg-blue-500"> <!-- Aplicamos el fondo azul a todo el body -->
     <x-banner />
 
-    <div class="min-h-screen">
+    <div class="min-h-screen"> <!-- Esta clase aún mantiene la estructura, pero sin fondo blanco -->
         @livewire('navigation-menu')
 
         <!-- Page Heading -->
         @if (isset($header))
-            <header class="bg-white dark:bg-gray-800 shadow">
+            <header class="bg-white dark:bg-gray-800 shadow"> <!-- Cambiar el fondo si es necesario -->
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     {{ $header }}
                 </div>
