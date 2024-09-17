@@ -11,7 +11,7 @@ use App\Models\Payments;
 class GameLobby extends Component
 {
     public $games;
-    public $gameId;
+    public $gameTypeId;
     public $showToCreateGameModal = false;
     public $showToJoinGameModal = false;
     public $gameName;
@@ -27,18 +27,16 @@ class GameLobby extends Component
         'nickname' => 'required|string|max:255',
     ];
 
-    public function mount($id)
-    {
-        $this->gameId = $id;
-        $this->loadRecentGames($id);
+    public function mount($gameTypeId){
+        $this->gameTypeId = $gameTypeId;
+        $this->loadRecentGames($this->gameTypeId);
     }
 
     public function createGame(){
      
         Game::create([
-            'game_type_id' => $this->gameId,
+            'game_type_id' => $this->gameTypeId,
             'name' => $this->gameName,
-           
             'initial_price' => $this->initialPrice,
             'rejoin_price' => $this->rejoinPrice,
             'created_by' => auth()->id(),
@@ -47,8 +45,8 @@ class GameLobby extends Component
 
         $this->reset(['gameName', 'initialPrice', 'rejoinPrice']);
         $this->showToCreateGameModal = false;
-
-        $this->loadRecentGames();
+       
+        $this->loadRecentGames($this->gameTypeId);
     }
 
     public function joinGame(){
@@ -126,14 +124,12 @@ class GameLobby extends Component
     }
 
    
-    private function loadRecentGames($id)
-    {
-            $this->games = Game::where('id', $id)
+    private function loadRecentGames($gameTypeId){
+            $this->games = Game::where('game_type_id', $gameTypeId)
                 ->with('creator')
                 ->latest()
-                
+                ->take(5)
                 ->get();
-       
     }
 
     public function render(){

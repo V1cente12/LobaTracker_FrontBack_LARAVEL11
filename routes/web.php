@@ -12,7 +12,7 @@ Route::get('/', function () {
 
 // Usa esta ruta para Livewire
 Route::get('/game/{gameId}', GameView::class)->name('game.view');
-Route::get('/game-lobby/{id}', GameLobby::class)->name('gamelobby.show');
+Route::get('/game-lobby/{gameTypeId}', GameLobby::class)->name('gamelobby.show');
 
 Route::middleware([
     'auth:sanctum',
