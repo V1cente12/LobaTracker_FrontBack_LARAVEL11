@@ -19,7 +19,15 @@
     @livewireStyles
 
 </head>
-<body class="font-sans antialiased bg-blue-500"> <!-- Aplicamos el fondo azul a todo el body -->
+<style>
+    body {
+        background-image: url('/images/dash.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+<body class="font-sans antialiased bg-gray-200"> <!-- Aplicamos el fondo azul a todo el body -->
     <x-banner />
 
     <div class="min-h-screen"> <!-- Esta clase aún mantiene la estructura, pero sin fondo blanco -->

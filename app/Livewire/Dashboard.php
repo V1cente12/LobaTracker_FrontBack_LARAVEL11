@@ -18,13 +18,12 @@ class Dashboard extends Component
 
     public function render()
     {
-        // Pasar los tipos de juegos a la vista
         return view('livewire.dashboard', [
             'gameTypes' => $this->gameTypes,
         ]);
     }
-    public function goToGameLobby($id)
+    public function goToGameLobby($gameTypeId)
     {
-        return redirect()->route('gamelobby.show', ['id' => $id]);
+        return redirect()->route('gamelobby.show', ['gameTypeId' => $gameTypeId]);
     }
 }
