@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Payments extends Model
 {
     use HasFactory;
-
+    
+    //fields
     protected $fillable = [
         'player_id',
         'game_id',
