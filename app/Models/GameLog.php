@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class GameLog extends Model
 {
     use HasFactory;
-
+    
+    //fields
     protected $fillable = ['game_id', 'player_id', 'action', 'occurred_at'];
 
     //relationsships
