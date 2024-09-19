@@ -22,6 +22,8 @@ class GameView extends Component
     public $selectedPlayerId;
     public $selectedGameId;
     public $points;
+    public $winnerName;
+    public $winnerTotal;
 
     public function mount($gameId){
         $this->loadGameData($gameId);
@@ -119,8 +121,7 @@ class GameView extends Component
         $this->showToReportPointsModal = false;
     }
 
-    private function allPlayersReported()
-    {
+    private function allPlayersReported(){
         // Obtener el número total de jugadores en el juego
         $totalPlayers = Player::where('game_id', $this->selectedGameId)->count();
     
@@ -147,7 +148,40 @@ class GameView extends Component
     }
 
     private function prepareForNextRound(){
-        $this->showToLoadingModal = false;
+        if (!$this->checkForWinner()) {
+          //  $this->checkForReengagement();
+            $this->showToLoadingModal = false;          
+        }  
+        $this->showToLoadingModal = false;      
+    }
+
+    private function checkForWinner(){
+        $players = Player::where('game_id', $this->selectedGameId)->get();
+        $playersOver100 = $players->filter(fn($player) => $player->total_points >= 100);
+
+        if ($playersOver100->count() === $players->count() - 1) {
+            $winner = $players->first(fn($player) => $player->total_points < 100);
+
+            if ($winner) {
+                $this->showWinnerModal($winner);
+                return true; 
+            }
+        }
+        return false;  
+    }
+
+    private function showWinnerModal($winner){
+        $this->winnerName = $winner->nickname;
+
+        $payments = Payments::where('game_id', $this->selectedGameId)
+                            ->sum('amount'); 
+
+        $this->winnerTotal = $payments;
+        $this->showToWinnerModal = true;  
+    }
+
+    public function closeWinnerModal(){
+        $this->showToWinnerModal = false;   
     }
 
     public function render(){
