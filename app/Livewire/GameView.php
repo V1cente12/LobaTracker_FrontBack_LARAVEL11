@@ -157,10 +157,10 @@ class GameView extends Component
 
     private function checkForWinner(){
         $players = Player::where('game_id', $this->selectedGameId)->get();
-        $playersOver100 = $players->filter(fn($player) => $player->total_points >= 100);
+        $playersOver100 = $players->filter(fn($player) => $player->total_points > 100);
 
         if ($playersOver100->count() === $players->count() - 1) {
-            $winner = $players->first(fn($player) => $player->total_points < 100);
+            $winner = $players->first(fn($player) => $player->total_points <= 100);
 
             if ($winner) {
                 $this->showWinnerModal($winner);
