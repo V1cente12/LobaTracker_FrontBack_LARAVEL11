@@ -1,4 +1,4 @@
-<div class="max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-screen-xl mx-auto bg-gradient-to-b from-gray-100 to-gray-300 p-4 shadow-lg rounded-lg mt-20">
+<div class="max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-screen-xl mx-auto bg-gradient-to-b rounded-lg mt-20">
     <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow-lg rounded-lg mb-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-2xl font-bold text-white">{{ $game->name }}</h2>
@@ -33,7 +33,8 @@
             </div>
         @endforeach
     </div>
-    <!-- Modal -->
+
+    <!-- Modal reportar puntos-->
     <div x-data="{ open: @entangle('showToReportPointsModal') }"
          x-show="open"
          @keydown.escape.window="open = false"
@@ -63,4 +64,18 @@
             </form>
         </div>
     </div>
+
+<!-- Modal de carga -->
+
+    <div>
+        @if ($showToLoadingModal)
+            <div wire:poll.4s="verifyAllPlayersReported" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75">
+                <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
+                    <h2 class="text-xl font-semibold mb-6">Esperando a que todos los jugadores reporten sus puntos...</h2>
+                    <p class="mt-4">Por favor, espera mientras verificamos si todos han reportado.</p>
+                </div>
+            </div>
+        @endif
+    </div>
+ 
 </div>
