@@ -65,8 +65,7 @@
         </div>
     </div>
 
-<!-- Modal de carga -->
-
+    <!-- Modal de carga -->
     <div>
         @if ($showToLoadingModal)
             <div wire:poll.4s="verifyAllPlayersReported" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75">
@@ -77,5 +76,19 @@
             </div>
         @endif
     </div>
- 
+
+    <!-- Modal para ganador -->
+    <div>
+        @if ($showToWinnerModal)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75">
+                <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
+                    <h2 class="text-xl font-semibold mb-4">Tenemos un ganador gente!</h2>
+                    <p class="text-lg mb-4">El ganador es:</p>
+                    <p class="text-2xl font-bold mb-4">{{ $winnerName }}</p>
+                    <p class="text-lg mb-6">Con un Prize Poll de: {{ $winnerTotal }} bs.</p>
+                    <button wire:click="closeWinnerModal" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Cerrar</button>
+                </div>
+            </div>
+        @endif
+    </div>
 </div>
