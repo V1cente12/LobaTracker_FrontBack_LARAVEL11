@@ -3,7 +3,10 @@
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-2xl font-bold text-white">{{ $game->name }}</h2>
             <h2 class="text-2xl font-bold text-white">{{ $payments}}</h2>
-            <button wire:click="showReportPointsModal({{ $game->id }})" class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500">
+            <button wire:click="showReportPointsModal({{ $game->id }})"
+                class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500
+                @if($game->status === 'finished') cursor-not-allowed bg-gray-400 text-gray-600 @endif"
+                @if($game->status === 'finished') disabled @endif>
                 Reportar Puntos
             </button>
         </div>
@@ -26,7 +29,7 @@
                                 @endif
                             </span>
                             <span class="text-lg mx-5">-</span>
-                            <span class="text-lg ml-1">{{ $score->total }}</span>
+                            <span class="text-lg ml-1">{{ $player->total_points }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -91,4 +94,19 @@
             </div>
         @endif
     </div>
+
+    <div>
+    @if ($showToRejoinModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75">
+            <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
+                <h3 class="text-lg font-semibold">Necesitas Reenganche</h3>
+                <p>Te reengancharás con un puntaje de {{ $rejoinScore }}.</p>
+                <div class="flex justify-end">
+                    <button wire:click="acceptRejoin" class="bg-green-500 text-white px-4 py-2 rounded">Aceptar</button>
+                    <button wire:click="rejectRejoin" class="bg-red-500 text-white px-4 py-2 rounded ml-2">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    @endif
+</div>
 </div>
