@@ -24,6 +24,7 @@ class GameView extends Component
     public $points;
     public $winnerName;
     public $winnerTotal;
+    public $rejoinScore;
 
     public function mount($gameId){
         $this->loadGameData($gameId);
@@ -149,7 +150,7 @@ class GameView extends Component
 
     private function prepareForNextRound(){
         if (!$this->checkForWinner()) {
-          //  $this->checkForReengagement();
+            $this->checkForRejoin();
             $this->showToLoadingModal = false;          
         }  
         $this->showToLoadingModal = false;      
@@ -164,6 +165,7 @@ class GameView extends Component
 
             if ($winner) {
                 $this->showWinnerModal($winner);
+                $this->updateGameStatusToFinished($winner);
                 return true; 
             }
         }
@@ -179,6 +181,53 @@ class GameView extends Component
         $this->winnerTotal = $payments;
         $this->showToWinnerModal = true;  
     }
+
+    private function updateGameStatusToFinished($winner){
+        $game = Game::where('id', $this->selectedGameId)->firstOrFail();
+        $game->status = 'finished';
+        $game->winner = $winner->id;
+        $game->save();
+    }
+
+    private function checkForRejoin(){
+        $player = Player::where('id', $this->selectedPlayerId)
+                        ->where('game_id', $this->selectedGameId)
+                        ->first();
+    
+        if ($player && $player->total_points > 100) {
+            $maxValidScore = Player::where('game_id', $this->selectedGameId)
+                                   ->where('total_points', '<=', 100)
+                                   ->max('total_points');
+    
+            $this->rejoinScore = $maxValidScore;
+            $this->selectedPlayerId = $player->id;
+            $this->showToRejoinModal = true;
+        }
+    }
+
+    public function acceptRejoin(){
+        $player = Player::findOrFail($this->selectedPlayerId);
+        $player->total_points = $this->rejoinScore; // Asignar puntaje
+        $player->save();
+    
+        $game = Game::findOrFail($this->selectedGameId);
+    
+        Payments::create([
+            'player_id' => $player->id,
+            'game_id' => $this->selectedGameId,
+            'payment_type' => 'rejoin',
+            'amount' => $game->rejoin_price, 
+        ]);
+    
+        $this->showToRejoinModal = false; 
+    }
+    
+    
+    public function rejectRejoin(){
+        $this->showToRejoinModal = false; 
+    }
+    
+    
 
     public function closeWinnerModal(){
         $this->showToWinnerModal = false;   
