@@ -26,8 +26,7 @@
                     $bgClass = 'from-yellow-500 to-yellow-600'; 
                 } elseif ($game->status === 'finished') {
                     $bgClass = 'from-gray-500 to-gray-600'; 
-                    $buttonClass = 'bg-gray-400 cursor-not-allowed text-gray-600'; 
-                    $buttonDisabled = true;
+                    $buttonClass = 'bg-yellow-400 hover:bg-yellow-500 text-gray-800';
                 }
             @endphp
             <div class="bg-gradient-to-b {{ $bgClass }} border-gray-100 shadow-lg rounded-lg p-6 transform hover:scale-105 transition-transform duration-300">
@@ -44,6 +43,14 @@
                 <p class="text-gray-100">Parada: <span class="font-semibold">{{ $game->initial_price }} Bs</span></p>
                 <p class="text-gray-100">Reenganche: <span class="font-semibold">{{ $game->rejoin_price }} Bs</span></p>
                 <p class="text-gray-100">Creador: <span class="font-semibold">{{ $game->creator->name }}</span></p>
+                <p class="text-gray-100">
+                    Ganador: 
+                    @if($game->winnerPlayer && $game->winnerPlayer->user)
+                        <span class="text-yellow-400 font-semibold">{{ $game->winnerPlayer->user->name }}</span>
+                    @else
+                        <span class="text-yellow-400">Aún no hay ganador en este juego</span>
+                    @endif
+                </p>
     
                 <div class="mt-4 flex justify-end">
                     <button 
