@@ -240,7 +240,7 @@ class GameView extends Component
     }
 
     public function getGameById($gameId){
-        Game::findOrFail($gameId);
+        return Game::findOrFail($gameId);
     }
     
     
