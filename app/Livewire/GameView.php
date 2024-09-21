@@ -207,10 +207,27 @@ class GameView extends Component
 
     public function acceptRejoin(){
         $player = Player::findOrFail($this->selectedPlayerId);
-        $player->total_points = $this->rejoinScore; // Asignar puntaje
+        $player->total_points = $this->rejoinScore; 
         $player->save();
-    
-        $game = Game::findOrFail($this->selectedGameId);
+        
+        $lastTurn = Score::where('player_id', $this->selectedPlayerId)
+                          ->where('game_id', $this->selectedGameId)
+                          ->max('turn');
+
+        $game = $this->getGameById($this->selectedGameId);
+
+        Score::where('player_id', $this->selectedPlayerId)
+            ->where('game_id', $this->selectedGameId)
+            ->delete();
+
+        Score::create([
+            'player_id' => $this->selectedPlayerId,
+            'game_id' => $this->selectedGameId,
+            'turn' => $lastTurn, 
+            'points' => $this->rejoinScore, 
+            'total' => $this->rejoinScore,
+            'has_reported' => true,
+        ]);
     
         Payments::create([
             'player_id' => $player->id,
@@ -221,10 +238,23 @@ class GameView extends Component
     
         $this->showToRejoinModal = false; 
     }
+
+    public function getGameById($gameId){
+        Game::findOrFail($gameId);
+    }
     
     
-    public function rejectRejoin(){
+    public function rejectRejoin() {
+        $this->removePlayerFromGame($this->selectedPlayerId, $this->selectedGameId);
         $this->showToRejoinModal = false; 
+        $game = $this->getGameById($this->selectedGameId);
+        return redirect()->route('gamelobby.show', ['gameTypeId' => $game->game_type_id]);
+    }
+
+    private function removePlayerFromGame($playerId, $gameId) {
+        Player::where('id', $playerId)
+              ->where('game_id', $gameId)
+              ->delete(); 
     }
     
     
