@@ -2,8 +2,8 @@
   <!-- submit points -->
     <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow-lg rounded-lg mb-6">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-2xl font-bold text-white">{{ $game->name }}</h2>
-            <h2 class="text-2xl font-bold text-white">{{ $payments }}</h2>
+            <h2 class="text-xl font-bold text-white">{{ $game->name }}</h2>
+            <h2 class="text-2xl font-bold text-white">{{ $payments }} Bs</h2>
             <button wire:click="showReportPointsModal({{ $game->id }})"
                 class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500
                 @if($game->status === 'finished') cursor-not-allowed bg-gray-400 text-gray-600 @endif"
@@ -16,40 +16,52 @@
     <!-- player points -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-auto max-w-xs sm:max-w-sm md:max-w-md lg:max-w-5xl mb-10">
         @foreach($players as $player)
-            @php
-                $isCurrentUser = $player->user_id == auth()->id();
-            @endphp
-            <div class="{{ $isCurrentUser ? 'bg-gradient-to-b from-green-500 to-[#199949]' : 'bg-white' }} rounded-lg shadow-lg p-4">
-                <h2 class="text-2xl font-semibold mb-4 text-center">{{ $player->nickname }}</h2>
-                <div class="space-y-2">
-                    @foreach($player->scores as $score)
-                        <div class="flex justify-center items-center bg-gray-100 p-2 rounded-md">
-                            <span class="text-lg mr-1">
-                                @if($score->points == 0)
-                                    L
-                                @else
-                                    {{ $score->points }}
-                                @endif
-                            </span>
-                            <span class="text-lg mx-5">-</span>
-                            <span class="text-lg ml-1">{{ $score->total }}</span>
-                        </div>
-                    @endforeach
-                </div>
+        @php
+            $isCurrentUser = $player->user_id == auth()->id();
+        @endphp
+        <div class="{{ $isCurrentUser ? 'bg-gradient-to-b from-green-500 to-[#199949]' : 'bg-white' }} rounded-lg shadow-lg p-4">
+            <h2 class="text-2xl font-semibold mb-4 text-center">{{ $player->nickname }}</h2>
+            <div class="space-y-2">
+                @foreach($player->scores as $score)
+                    <div class="flex justify-center items-center bg-gray-100 p-2 rounded-md {{ $score->exact_deal ? 'bg-green-200' : '' }}">
+                        <span class="text-lg mr-1">
+                            @if($score->points == 0)
+                                L
+                            @else
+                                {{ $score->points }}
+                            @endif
+                        </span>
+                        <span class="text-lg mx-5">-</span>
+                        <span class="text-lg ml-1">{{ $score->total }}</span>
+                    </div>
+                @endforeach
             </div>
-        @endforeach
+        </div>
+    @endforeach
+    
+    
     </div>
 
-    <!-- Sección del botón Dejar Juego -->
-    <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow-lg rounded-lg mt-10">
-        <div class="flex items-center justify-center">
-            <button wire:click="showLeaveGameModal({{ $game->id }})"
-                class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600">
-                Dejar Juego
-            </button>
+    <div class="p-4 bg-gradient-to-r from-[#FF0000] to-[#FF3333] shadow-lg rounded-lg mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <div class="text-xl font-bold text-white">
+                Tu deuda: {{ number_format($paymentsByPlayer, 2) }} Bs
+            </div>
+            <div class="flex space-x-4"> <!-- Añadido un espacio entre los botones -->
+                <button wire:click="showExactDealModal({{ $game->id }})" class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500">
+                    Partió Exacto
+                </button>
+                <button class="bg-gray-400 text-gray-600 px-4 py-2 rounded-lg font-semibold cursor-not-allowed">
+                    Dejar Juego
+                </button>
+                <!--<button wire:click="showLeaveGameModal({{ $game->id }})"
+                    class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600">
+                    Dejar Juego
+                </button>-->
+            </div>
         </div>
     </div>
- 
+    
 
   <!-- Modal reportar puntos-->
     <div x-data="{ open: @entangle('showToReportPointsModal') }"
@@ -79,6 +91,29 @@
         </form>
         </div>
     </div>
+
+    <!-- Modal Partió Exacto -->
+    <div x-data="{ open: @entangle('showToExactDealModal') }"
+    x-show="open"
+    @keydown.escape.window="open = false"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 scale-90"
+    x-transition:enter-end="opacity-100 scale-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 scale-100"
+    x-transition:leave-end="opacity-0 scale-95"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75">
+        <div class="bg-gradient-to-b from-[#199949] to-green-500 p-8 rounded-lg shadow-xl w-full max-w-lg">
+        <h2 class="text-xl font-semibold text-white text-center mb-6">¿Estás seguro de que repartiste exacto?</h2>
+            <div class="flex justify-center space-x-4">
+                <button type="button" wire:click="hideExactDealModal" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Cancelar</button>
+                <button type="button" wire:click="confirmExactDeal" class="bg-yellow-400 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Modal para confirmar dejar el juego -->
     <div x-data="{ open: @entangle('showToLeaveGameModal') }"
