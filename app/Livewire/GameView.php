@@ -19,6 +19,7 @@ class GameView extends Component
     public $showToLoadingModal      = false;
     public $showToRejoinModal       = false;
     public $showToWinnerModal       = false;
+    public $showToLeaveGameModal    = false;
     public $selectedPlayerId;
     public $selectedGameId;
     public $points;
@@ -256,8 +257,23 @@ class GameView extends Component
               ->where('game_id', $gameId)
               ->delete(); 
     }
+
+    public function confirmLeaveGame() {
+        $this->removePlayerFromGame($this->selectedPlayerId, $this->selectedGameId);
+        $this->showToLeaveGameModal = false;
     
+        $game = $this->getGameById($this->selectedGameId);
+        return redirect()->route('gamelobby.show', ['gameTypeId' => $game->game_type_id]);
+    }
     
+    public function showLeaveGameModal($gameId) {
+        $this->selectedGameId = $gameId;
+        $this->showToLeaveGameModal = true;
+    }
+    
+    public function hideLeaveGameModal() {
+        $this->showToLeaveGameModal = false;
+    }
 
     public function closeWinnerModal(){
         $this->showToWinnerModal = false;   
