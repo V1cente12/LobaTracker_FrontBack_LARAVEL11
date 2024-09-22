@@ -9,8 +9,12 @@
                 @if($game->status === 'finished') disabled @endif>
                 Reportar Puntos
             </button>
+            <button wire:click="showLeaveGameModal({{ $game->id }})"
+                class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600">
+                Dejar Juego
+            </button>
         </div>
-    </div>    
+    </div>  
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-auto max-w-xs sm:max-w-sm md:max-w-md lg:max-w-5xl">
         @foreach($players as $player)
             @php
@@ -53,7 +57,6 @@
         <form wire:submit.prevent="reportPoints" class="space-y-6">
             <input type="hidden" wire:model="selectedPlayerId">
             <input type="hidden" wire:model="selectedGameId">
-
             <div>
                 <label for="points" class="block text-base font-medium text-white">Puntaje</label>
                 <input type="number" id="points" wire:model="points" class="mt-1 block w-full p-2 bg-gray-100 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" step="0.01" required>
@@ -67,6 +70,34 @@
         </div>
     </div>
 
+    <!-- Modal para confirmar dejar el juego -->
+    <div x-data="{ open: @entangle('showToLeaveGameModal') }"
+        x-show="open"
+        @keydown.escape.window="open = false"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-90"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75">
+        <div class="bg-gradient-to-b from-red-600 to-red-500 p-8 rounded-lg shadow-xl w-full max-w-lg">
+            <h2 class="text-xl font-semibold text-white mb-6">¿Estás seguro que deseas dejar el juego?</h2>
+            <div class="space-y-6">
+                <p class="text-white text-center">Perderás tu progreso en este juego.</p>
+                <div class="flex justify-center space-x-4">
+                    <button type="button" wire:click="hideLeaveGameModal"
+                            class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:ring focus:ring-gray-300">
+                        Cancelar
+                    </button>
+                    <button type="button" wire:click="confirmLeaveGame"
+                            class="px-4 py-2 bg-yellow-400 text-gray-800 rounded-lg hover:bg-yellow-500 focus:ring focus:ring-yellow-300">
+                        Dejar Juego
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal de carga -->
     <div>
