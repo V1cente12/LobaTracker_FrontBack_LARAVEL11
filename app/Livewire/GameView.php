@@ -15,11 +15,13 @@ class GameView extends Component
     public $players;
     public $player;
     public $payments;
+    public $paymentsByPlayer;
     public $showToReportPointsModal = false;
     public $showToLoadingModal      = false;
     public $showToRejoinModal       = false;
     public $showToWinnerModal       = false;
     public $showToLeaveGameModal    = false;
+    public $showToExactDealModal      = false;
     public $selectedPlayerId;
     public $selectedGameId;
     public $points;
@@ -37,6 +39,14 @@ class GameView extends Component
                                     ->with('scores')
                                     ->get();
         $this->payments = Payments::where('game_id', $gameId)
+                                    ->sum('amount');
+
+        $this->player   = Player::where('user_id', auth()->id())
+                                    ->where('game_id', $gameId)
+                                    ->firstOrFail(); 
+
+        $this->paymentsByPlayer = Payments::where('game_id', $gameId)
+                                    ->where('player_id', $this->player->id) 
                                     ->sum('amount');
     }
 
@@ -279,6 +289,46 @@ class GameView extends Component
         $this->showToWinnerModal = false;   
     }
 
+    public function showExactDealModal($gameId)
+    {
+        $this->player = Player::where('user_id', auth()->id())
+                        ->where('game_id', $gameId)
+                        ->firstOrFail(); 
+        $this->selectedPlayerId = $this->player->id;
+        $this->selectedGameId = $gameId;
+        $this->showToExactDealModal = true;
+    }
+
+    public function hideExactDealModal()
+    {
+        $this->showToExactDealModal = false;
+    }
+
+    public function confirmExactDeal()
+    {
+        // Obtener el último turno
+        $lastTurn = Score::where('player_id', $this->selectedPlayerId)
+                          ->where('game_id', $this->selectedGameId)
+                          ->max('turn');
+       
+        // Si hay un último turno, obtener el puntaje correspondiente
+        if ($lastTurn) {
+            $lastScore = Score::where('player_id', $this->selectedPlayerId)
+                              ->where('game_id', $this->selectedGameId)
+                              ->where('turn', $lastTurn)
+                              ->first();
+    
+            // Si se encontró el puntaje, restar 5 puntos
+            if ($lastScore) {
+                $lastScore->points -= 5;
+                $lastScore->total -= 5;
+                $lastScore->exact_deal = true; // Marcar como true
+                $lastScore->save();
+            }
+        }
+    
+        $this->hideExactDealModal();
+    }
     public function render(){
         return view('livewire.game-view');
     }
