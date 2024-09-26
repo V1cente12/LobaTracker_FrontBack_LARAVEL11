@@ -61,7 +61,7 @@ class GameLobby extends Component
 
         $this->createPaymentIfNotExists($player, $game);
 
-        $this->updatePlayerScore($player, $game);
+        //$this->updatePlayerScore($player, $game);
 
         return redirect()->route('game.view', ['gameId' => $game->id]);
     }
