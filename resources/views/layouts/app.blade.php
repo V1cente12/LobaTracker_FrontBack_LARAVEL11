@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ 'La Baraja Mágica' }}</title>
+    <title>{{ 'A la Note' }}</title>
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('images/logo_loba.ico') }}" type="image/x-icon">
     <!-- Fonts -->
