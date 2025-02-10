@@ -17,7 +17,14 @@
 
     <!-- Styles -->
     @livewireStyles
-
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register("{{ asset('serviceworker.js') }}")
+                    .then(() => console.log("Service Worker registrado"))
+                    .catch(error => console.log("Error:", error));
+            }
+        </script>
 </head>
 <style>
     body {
