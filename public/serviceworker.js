@@ -5,8 +5,7 @@ self.addEventListener('install', (event) => {
                 '/',
                 '/css/app.css',
                 '/js/app.js',
-                '/images/logo_loba.png',
-                '/images/icon-512x512.png'
+                '/images/logo_loba.png'
             ]);
         })
     );
